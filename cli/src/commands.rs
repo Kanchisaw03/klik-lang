@@ -628,7 +628,11 @@ fn cfg_to_dot(ir: &klik_ir::IrModule) -> String {
                             t
                         ));
                     }
-                    klik_ir::Terminator::CondBranch(_, klik_ir::BlockRef(t), klik_ir::BlockRef(e)) => {
+                    klik_ir::Terminator::CondBranch(
+                        _,
+                        klik_ir::BlockRef(t),
+                        klik_ir::BlockRef(e),
+                    ) => {
                         out.push_str(&format!(
                             "    {}_n{} -> {}_n{} [label=\"true\"];\n",
                             dot_escape(&func.name),
@@ -1983,16 +1987,7 @@ pub fn build(
     emit_all: bool,
 ) -> Result<()> {
     build_with_options(
-        input,
-        release,
-        target,
-        output,
-        emit_all,
-        "O1",
-        false,
-        false,
-        false,
-        false,
+        input, release, target, output, emit_all, "O1", false, false, false, false,
     )
 }
 
@@ -2011,29 +2006,13 @@ pub fn build_with_options(
     let opt_level = crate::pipeline::CliOptLevel::parse(opt_level)?;
     if let Some(input_file) = input {
         return build_single_file(
-            input_file,
-            release,
-            target,
-            output,
-            emit_all,
-            opt_level,
-            emit_ir,
-            emit_ast,
-            emit_cfg,
+            input_file, release, target, output, emit_all, opt_level, emit_ir, emit_ast, emit_cfg,
             trace,
         );
     }
 
     build_project(
-        release,
-        target,
-        output,
-        emit_all,
-        opt_level,
-        emit_ir,
-        emit_ast,
-        emit_cfg,
-        trace,
+        release, target, output, emit_all, opt_level, emit_ir, emit_ast, emit_cfg, trace,
     )
 }
 
@@ -2122,8 +2101,13 @@ fn build_project(
         }
 
         trace_log(trace, "[LINK] linking executable");
-        link_executable(&obj_path, &output_path)
-            .with_context(|| format!("Failed linking {} -> {}", obj_path.display(), output_path.display()))?;
+        link_executable(&obj_path, &output_path).with_context(|| {
+            format!(
+                "Failed linking {} -> {}",
+                obj_path.display(),
+                output_path.display()
+            )
+        })?;
         trace_log(trace, "[LINK] executable linked");
 
         if !emit_all {
@@ -2228,8 +2212,13 @@ fn build_single_file(
         }
 
         trace_log(trace, "[LINK] linking executable");
-        link_executable(&obj_path, &output_path)
-            .with_context(|| format!("Failed linking {} -> {}", obj_path.display(), output_path.display()))?;
+        link_executable(&obj_path, &output_path).with_context(|| {
+            format!(
+                "Failed linking {} -> {}",
+                obj_path.display(),
+                output_path.display()
+            )
+        })?;
         trace_log(trace, "[LINK] executable linked");
 
         if !emit_all {
@@ -2543,11 +2532,19 @@ pub fn test_backend() -> Result<()> {
                 }
             }
             (Err(e), Ok(_)) => {
-                println!("FAIL {} (native {})", case_name, classify_backend_error(&format!("{:#}", e)).to_lowercase());
+                println!(
+                    "FAIL {} (native {})",
+                    case_name,
+                    classify_backend_error(&format!("{:#}", e)).to_lowercase()
+                );
                 core_failures.push(format!("{} native error: {:#}", case_name, e));
             }
             (Ok(_), Err(e)) => {
-                println!("FAIL {} (cranelift {})", case_name, classify_backend_error(&format!("{:#}", e)).to_lowercase());
+                println!(
+                    "FAIL {} (cranelift {})",
+                    case_name,
+                    classify_backend_error(&format!("{:#}", e)).to_lowercase()
+                );
                 core_failures.push(format!("{} cranelift error: {:#}", case_name, e));
             }
             (Err(e1), Err(e2)) => {
@@ -2630,7 +2627,10 @@ pub fn test_backend() -> Result<()> {
     println!("\nBackend Comparison\n------------------");
     if let (Some(native), Some(cranelift)) = (&benchmark_native, &benchmark_cranelift) {
         println!("Rust backend compile time: {} ms", native.compile_ms);
-        println!("Cranelift backend compile time: {} ms", cranelift.compile_ms);
+        println!(
+            "Cranelift backend compile time: {} ms",
+            cranelift.compile_ms
+        );
         println!("\nExecution time:\n");
         println!("benchmark.klik");
         println!("Rust backend: {:.2}s", native.exec_secs);
@@ -2648,7 +2648,10 @@ pub fn test_backend() -> Result<()> {
     }
 
     if !core_failures.is_empty() {
-        bail!("core backend validation failed with {} failure(s)", core_failures.len());
+        bail!(
+            "core backend validation failed with {} failure(s)",
+            core_failures.len()
+        );
     }
 
     println!("\n{}", "All core backend checks passed".green().bold());

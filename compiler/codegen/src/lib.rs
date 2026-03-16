@@ -344,7 +344,11 @@ impl CodeGenerator {
 
             if let Some(phis) = phi_nodes.get(&block_idx) {
                 let params = builder.block_params(cl_block).to_vec();
-                let base = if block_idx == 0 { ir_func.params.len() } else { 0 };
+                let base = if block_idx == 0 {
+                    ir_func.params.len()
+                } else {
+                    0
+                };
                 for (i, phi) in phis.iter().enumerate() {
                     if let Some(param) = params.get(base + i) {
                         value_map.insert(phi.result, *param);
@@ -375,14 +379,12 @@ impl CodeGenerator {
                         value_map.insert(*result, val);
                     }
                     Instruction::BinOp(result, op, lhs, rhs) => {
-                        let mut l = value_map
-                            .get(lhs)
-                            .copied()
-                            .unwrap_or_else(|| self.zero_value(&mut builder, cl_types::I64, ptr_type));
-                        let mut r = value_map
-                            .get(rhs)
-                            .copied()
-                            .unwrap_or_else(|| self.zero_value(&mut builder, cl_types::I64, ptr_type));
+                        let mut l = value_map.get(lhs).copied().unwrap_or_else(|| {
+                            self.zero_value(&mut builder, cl_types::I64, ptr_type)
+                        });
+                        let mut r = value_map.get(rhs).copied().unwrap_or_else(|| {
+                            self.zero_value(&mut builder, cl_types::I64, ptr_type)
+                        });
 
                         let expected = match op {
                             BinOp::FAdd | BinOp::FSub | BinOp::FMul | BinOp::FDiv => cl_types::F64,
@@ -410,17 +412,18 @@ impl CodeGenerator {
                         value_map.insert(*result, val);
                     }
                     Instruction::UnaryOp(result, op, operand) => {
-                        let o = value_map
-                            .get(operand)
-                            .copied()
-                            .unwrap_or_else(|| self.zero_value(&mut builder, cl_types::I64, ptr_type));
+                        let o = value_map.get(operand).copied().unwrap_or_else(|| {
+                            self.zero_value(&mut builder, cl_types::I64, ptr_type)
+                        });
                         let val = match op {
                             UnOp::INeg => {
-                                let casted = self.cast_value(&mut builder, o, cl_types::I64, ptr_type);
+                                let casted =
+                                    self.cast_value(&mut builder, o, cl_types::I64, ptr_type);
                                 builder.ins().ineg(casted)
                             }
                             UnOp::FNeg => {
-                                let casted = self.cast_value(&mut builder, o, cl_types::F64, ptr_type);
+                                let casted =
+                                    self.cast_value(&mut builder, o, cl_types::F64, ptr_type);
                                 builder.ins().fneg(casted)
                             }
                             UnOp::Not => {
@@ -476,25 +479,25 @@ impl CodeGenerator {
                             if !results.is_empty() {
                                 value_map.insert(*result, results[0]);
                             } else {
-                                let expected = value_types.get(result).copied().unwrap_or(cl_types::I64);
+                                let expected =
+                                    value_types.get(result).copied().unwrap_or(cl_types::I64);
                                 let zero = self.zero_value(&mut builder, expected, ptr_type);
                                 value_map.insert(*result, zero);
                             }
                         } else {
-                            let expected = value_types.get(result).copied().unwrap_or(cl_types::I64);
+                            let expected =
+                                value_types.get(result).copied().unwrap_or(cl_types::I64);
                             let zero = self.zero_value(&mut builder, expected, ptr_type);
                             value_map.insert(*result, zero);
                         }
                     }
                     Instruction::ICmp(result, op, lhs, rhs) => {
-                        let l = value_map
-                            .get(lhs)
-                            .copied()
-                            .unwrap_or_else(|| self.zero_value(&mut builder, cl_types::I64, ptr_type));
-                        let r = value_map
-                            .get(rhs)
-                            .copied()
-                            .unwrap_or_else(|| self.zero_value(&mut builder, cl_types::I64, ptr_type));
+                        let l = value_map.get(lhs).copied().unwrap_or_else(|| {
+                            self.zero_value(&mut builder, cl_types::I64, ptr_type)
+                        });
+                        let r = value_map.get(rhs).copied().unwrap_or_else(|| {
+                            self.zero_value(&mut builder, cl_types::I64, ptr_type)
+                        });
                         let l = self.cast_value(&mut builder, l, cl_types::I64, ptr_type);
                         let r = self.cast_value(&mut builder, r, cl_types::I64, ptr_type);
                         let cc = match op {
@@ -512,14 +515,12 @@ impl CodeGenerator {
                         value_map.insert(*result, val);
                     }
                     Instruction::FCmp(result, op, lhs, rhs) => {
-                        let l = value_map
-                            .get(lhs)
-                            .copied()
-                            .unwrap_or_else(|| self.zero_value(&mut builder, cl_types::F64, ptr_type));
-                        let r = value_map
-                            .get(rhs)
-                            .copied()
-                            .unwrap_or_else(|| self.zero_value(&mut builder, cl_types::F64, ptr_type));
+                        let l = value_map.get(lhs).copied().unwrap_or_else(|| {
+                            self.zero_value(&mut builder, cl_types::F64, ptr_type)
+                        });
+                        let r = value_map.get(rhs).copied().unwrap_or_else(|| {
+                            self.zero_value(&mut builder, cl_types::F64, ptr_type)
+                        });
                         let l = self.cast_value(&mut builder, l, cl_types::F64, ptr_type);
                         let r = self.cast_value(&mut builder, r, cl_types::F64, ptr_type);
                         let cc = match op {
@@ -537,10 +538,9 @@ impl CodeGenerator {
                         value_map.insert(*result, val);
                     }
                     Instruction::Cast(result, val, target_ty) => {
-                        let v = value_map
-                            .get(val)
-                            .copied()
-                            .unwrap_or_else(|| self.zero_value(&mut builder, cl_types::I64, ptr_type));
+                        let v = value_map.get(val).copied().unwrap_or_else(|| {
+                            self.zero_value(&mut builder, cl_types::I64, ptr_type)
+                        });
                         let target = self.ir_type_to_cl(target_ty, ptr_type);
                         let cast_val = self.cast_value(&mut builder, v, target, ptr_type);
                         value_map.insert(*result, cast_val);
@@ -564,9 +564,7 @@ impl CodeGenerator {
                             .copied()
                             .unwrap_or_else(|| self.zero_value(&mut builder, ptr_type, ptr_type));
                         let addr = self.cast_value(&mut builder, addr, ptr_type, ptr_type);
-                        let val = builder
-                            .ins()
-                            .load(cl_types::I64, MemFlags::new(), addr, 0);
+                        let val = builder.ins().load(cl_types::I64, MemFlags::new(), addr, 0);
                         value_map.insert(*result, val);
                     }
                     Instruction::Store(address, value) => {
@@ -575,10 +573,9 @@ impl CodeGenerator {
                             .copied()
                             .unwrap_or_else(|| self.zero_value(&mut builder, ptr_type, ptr_type));
                         let addr = self.cast_value(&mut builder, addr, ptr_type, ptr_type);
-                        let val = value_map
-                            .get(value)
-                            .copied()
-                            .unwrap_or_else(|| self.zero_value(&mut builder, cl_types::I64, ptr_type));
+                        let val = value_map.get(value).copied().unwrap_or_else(|| {
+                            self.zero_value(&mut builder, cl_types::I64, ptr_type)
+                        });
                         let val = self.cast_value(&mut builder, val, cl_types::I64, ptr_type);
                         builder.ins().store(MemFlags::new(), val, addr, 0);
                     }
@@ -588,10 +585,9 @@ impl CodeGenerator {
                             .copied()
                             .unwrap_or_else(|| self.zero_value(&mut builder, ptr_type, ptr_type));
                         let base_ptr = self.cast_value(&mut builder, base_ptr, ptr_type, ptr_type);
-                        let idx = value_map
-                            .get(index)
-                            .copied()
-                            .unwrap_or_else(|| self.zero_value(&mut builder, cl_types::I64, ptr_type));
+                        let idx = value_map.get(index).copied().unwrap_or_else(|| {
+                            self.zero_value(&mut builder, cl_types::I64, ptr_type)
+                        });
                         let idx = self.cast_value(&mut builder, idx, cl_types::I64, ptr_type);
                         let scale = builder.ins().iconst(cl_types::I64, 8);
                         let byte_off = builder.ins().imul(idx, scale);
@@ -607,9 +603,7 @@ impl CodeGenerator {
                         let base_ptr = self.cast_value(&mut builder, base_ptr, ptr_type, ptr_type);
                         let off = builder.ins().iconst(ptr_type, *offset as i64);
                         let addr = builder.ins().iadd(base_ptr, off);
-                        let loaded = builder
-                            .ins()
-                            .load(cl_types::I64, MemFlags::new(), addr, 0);
+                        let loaded = builder.ins().load(cl_types::I64, MemFlags::new(), addr, 0);
                         value_map.insert(*result, loaded);
                     }
                     Instruction::StructFieldStore(base, offset, value) => {
@@ -620,10 +614,9 @@ impl CodeGenerator {
                         let base_ptr = self.cast_value(&mut builder, base_ptr, ptr_type, ptr_type);
                         let off = builder.ins().iconst(ptr_type, *offset as i64);
                         let addr = builder.ins().iadd(base_ptr, off);
-                        let v = value_map
-                            .get(value)
-                            .copied()
-                            .unwrap_or_else(|| self.zero_value(&mut builder, cl_types::I64, ptr_type));
+                        let v = value_map.get(value).copied().unwrap_or_else(|| {
+                            self.zero_value(&mut builder, cl_types::I64, ptr_type)
+                        });
                         let v = self.cast_value(&mut builder, v, cl_types::I64, ptr_type);
                         builder.ins().store(MemFlags::new(), v, addr, 0);
                     }
@@ -638,9 +631,10 @@ impl CodeGenerator {
                         if ret_ty == cl_types::INVALID {
                             builder.ins().return_(&[]);
                         } else if let Some(v) = val {
-                            let ret_val = value_map.get(v).copied().unwrap_or_else(|| {
-                                self.zero_value(&mut builder, ret_ty, ptr_type)
-                            });
+                            let ret_val = value_map
+                                .get(v)
+                                .copied()
+                                .unwrap_or_else(|| self.zero_value(&mut builder, ret_ty, ptr_type));
                             let ret_val = self.cast_value(&mut builder, ret_val, ret_ty, ptr_type);
                             builder.ins().return_(&[ret_val]);
                         } else {
@@ -661,11 +655,11 @@ impl CodeGenerator {
                         builder.ins().jump(target_block, &phi_args);
                     }
                     Terminator::CondBranch(cond, BlockRef(then_t), BlockRef(else_t)) => {
-                        let cond_val_raw = value_map
-                            .get(cond)
-                            .copied()
-                            .unwrap_or_else(|| self.zero_value(&mut builder, cl_types::I8, ptr_type));
-                        let cond_val = self.normalize_cond_to_b1(&mut builder, cond_val_raw, ptr_type);
+                        let cond_val_raw = value_map.get(cond).copied().unwrap_or_else(|| {
+                            self.zero_value(&mut builder, cl_types::I8, ptr_type)
+                        });
+                        let cond_val =
+                            self.normalize_cond_to_b1(&mut builder, cond_val_raw, ptr_type);
                         let then_block = block_map[then_t];
                         let else_block = block_map[else_t];
                         let then_args = self.phi_args_for_edge(
@@ -1029,13 +1023,20 @@ impl CodeGenerator {
         ptr_type: cranelift_codegen::ir::Type,
     ) -> cranelift::prelude::Value {
         let mut last = self.zero_value(builder, cl_types::I32, ptr_type);
-        let space_ptr = self.data_symbol_ptr(builder, module, runtime_print_data.space_data, ptr_type);
+        let space_ptr =
+            self.data_symbol_ptr(builder, module, runtime_print_data.space_data, ptr_type);
         let newline_ptr =
             self.data_symbol_ptr(builder, module, runtime_print_data.newline_data, ptr_type);
 
         if args.is_empty() {
             if newline {
-                last = self.emit_print_s_once(builder, module, runtime_print_data, newline_ptr, ptr_type);
+                last = self.emit_print_s_once(
+                    builder,
+                    module,
+                    runtime_print_data,
+                    newline_ptr,
+                    ptr_type,
+                );
             }
             return last;
         }
@@ -1047,16 +1048,24 @@ impl CodeGenerator {
             if is_string {
                 last = self.emit_print_s_once(builder, module, runtime_print_data, *arg, ptr_type);
             } else {
-                last = self.emit_print_i64_once(builder, module, runtime_print_data, *arg, ptr_type);
+                last =
+                    self.emit_print_i64_once(builder, module, runtime_print_data, *arg, ptr_type);
             }
 
             if !is_last {
-                last = self.emit_print_s_once(builder, module, runtime_print_data, space_ptr, ptr_type);
+                last = self.emit_print_s_once(
+                    builder,
+                    module,
+                    runtime_print_data,
+                    space_ptr,
+                    ptr_type,
+                );
             }
         }
 
         if newline {
-            last = self.emit_print_s_once(builder, module, runtime_print_data, newline_ptr, ptr_type);
+            last =
+                self.emit_print_s_once(builder, module, runtime_print_data, newline_ptr, ptr_type);
         }
 
         last
@@ -1069,7 +1078,10 @@ impl CodeGenerator {
             .map(|(name, ty)| format!("{}:{:?}", name, ty))
             .collect::<Vec<_>>()
             .join(", ");
-        format!("fn {}({}) -> {:?}", ir_func.name, params, ir_func.return_type)
+        format!(
+            "fn {}({}) -> {:?}",
+            ir_func.name, params, ir_func.return_type
+        )
     }
 
     fn describe_ir_blocks(&self, ir_func: &IrFunction) -> String {

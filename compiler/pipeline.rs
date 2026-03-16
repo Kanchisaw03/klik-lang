@@ -31,7 +31,10 @@ pub fn run_optimization_pipeline(
         CliOptLevel::O1 => {
             let pass = klik_opt::constant_folding(ir_module);
             if trace {
-                eprintln!("[OPT] constant folding pass applied ({} folds)", pass.folded);
+                eprintln!(
+                    "[OPT] constant folding pass applied ({} folds)",
+                    pass.folded
+                );
             }
             klik_opt::OptimizeReport {
                 constant_folding: pass,

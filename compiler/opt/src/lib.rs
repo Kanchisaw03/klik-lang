@@ -327,7 +327,11 @@ fn simplify_blocks_function(func: &mut IrFunction) -> usize {
         }
 
         for (block_idx, succ_idx, pred_idx) in &candidates {
-            redirect_terminator_edges(&mut func.blocks[*pred_idx].terminator, *block_idx, *succ_idx);
+            redirect_terminator_edges(
+                &mut func.blocks[*pred_idx].terminator,
+                *block_idx,
+                *succ_idx,
+            );
             if let Some(succ) = func.blocks.get_mut(*succ_idx) {
                 for inst in &mut succ.instructions {
                     if let Instruction::Phi(_, incoming) = inst {
@@ -486,7 +490,8 @@ fn simplify_branches_function(func: &mut IrFunction) -> usize {
                 _ => None,
             };
             if let Some(taken_then) = fold {
-                block.terminator = Some(Terminator::Branch(if taken_then { then_b } else { else_b }));
+                block.terminator =
+                    Some(Terminator::Branch(if taken_then { then_b } else { else_b }));
                 changed += 1;
             }
         }

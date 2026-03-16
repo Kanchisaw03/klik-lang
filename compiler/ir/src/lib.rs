@@ -436,11 +436,11 @@ impl IrBuilder {
             let val = self.fresh_value();
             self.var_map.insert(param.name.clone(), val);
 
-            if let Some(struct_name) = self.resolve_struct_name_from_type_expr(
-                &param.type_expr,
-                impl_self_type,
-            ) {
-                self.var_struct_types.insert(param.name.clone(), struct_name);
+            if let Some(struct_name) =
+                self.resolve_struct_name_from_type_expr(&param.type_expr, impl_self_type)
+            {
+                self.var_struct_types
+                    .insert(param.name.clone(), struct_name);
             }
         }
 
@@ -609,7 +609,8 @@ impl IrBuilder {
                     }
 
                     if let Some(struct_name) = self.resolve_struct_name_from_expr(&a.value) {
-                        self.var_struct_types.insert(ident.name.clone(), struct_name);
+                        self.var_struct_types
+                            .insert(ident.name.clone(), struct_name);
                     } else {
                         self.var_struct_types.remove(&ident.name);
                     }
@@ -937,13 +938,15 @@ impl IrBuilder {
                         (false, true) => ev,
                         (false, false) => {
                             let v = self.fresh_value();
-                            func.current_block().push(Instruction::Const(v, IrConst::Void));
+                            func.current_block()
+                                .push(Instruction::Const(v, IrConst::Void));
                             v
                         }
                     }
                 } else {
                     let v = self.fresh_value();
-                    func.current_block().push(Instruction::Const(v, IrConst::Void));
+                    func.current_block()
+                        .push(Instruction::Const(v, IrConst::Void));
                     v
                 }
             }
@@ -1166,7 +1169,8 @@ impl IrBuilder {
         let elements = self.extract_array_elements(source)?;
 
         let mut acc = self.fresh_value();
-        func.current_block().push(Instruction::Const(acc, IrConst::Int(0)));
+        func.current_block()
+            .push(Instruction::Const(acc, IrConst::Int(0)));
 
         for elem in elements {
             let mut value = self.build_expr(&elem, func);
@@ -1219,7 +1223,10 @@ impl IrBuilder {
             let merged_acc = self.fresh_value();
             func.current_block().push(Instruction::Phi(
                 merged_acc,
-                vec![(BlockRef(then_block), then_acc), (BlockRef(else_block), acc)],
+                vec![
+                    (BlockRef(then_block), then_acc),
+                    (BlockRef(else_block), acc),
+                ],
             ));
             acc = merged_acc;
         }
@@ -1313,7 +1320,8 @@ impl IrBuilder {
     fn build_match_expr(&mut self, m: &klik_ast::MatchExpr, func: &mut IrFunction) -> Value {
         if m.arms.is_empty() {
             let v = self.fresh_value();
-            func.current_block().push(Instruction::Const(v, IrConst::Void));
+            func.current_block()
+                .push(Instruction::Const(v, IrConst::Void));
             return v;
         }
 
@@ -1415,7 +1423,8 @@ impl IrBuilder {
                         .into_iter()
                         .map(|(b, v)| (BlockRef(b), v))
                         .collect();
-                    func.current_block().push(Instruction::Phi(phi, phi_incoming));
+                    func.current_block()
+                        .push(Instruction::Phi(phi, phi_incoming));
                     merged_vars.insert(name, phi);
                 }
             }
@@ -1436,7 +1445,8 @@ impl IrBuilder {
             .into_iter()
             .map(|(b, v)| (BlockRef(b), v))
             .collect();
-        func.current_block().push(Instruction::Phi(result, phi_incoming));
+        func.current_block()
+            .push(Instruction::Phi(result, phi_incoming));
         result
     }
 
@@ -1446,10 +1456,7 @@ impl IrBuilder {
         for field in &def.fields {
             let ty = self.type_expr_to_ir(&field.type_expr);
             let size = ty.size_bytes().max(1);
-            fields.insert(
-                field.name.clone(),
-                StructFieldLayout { offset },
-            );
+            fields.insert(field.name.clone(), StructFieldLayout { offset });
             offset += size;
         }
 
@@ -1478,10 +1485,9 @@ impl IrBuilder {
             klik_ast::TypeExpr::Named { name, .. } if name == "Self" => {
                 impl_self_type.map(|s| s.to_string())
             }
-            klik_ast::TypeExpr::Named { name, .. } => self
-                .struct_layouts
-                .contains_key(name)
-                .then(|| name.clone()),
+            klik_ast::TypeExpr::Named { name, .. } => {
+                self.struct_layouts.contains_key(name).then(|| name.clone())
+            }
             _ => None,
         }
     }
