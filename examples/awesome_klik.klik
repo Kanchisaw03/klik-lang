@@ -1,0 +1,313 @@
+// awesome_klik - A Comprehensive KLIK Language Showcase
+//
+// This program demonstrates all major features of the KLIK language
+// in a single, cohesive application: a mini analytics engine.
+
+// ============================================================
+// Part 1: Enums for categorization
+// ============================================================
+
+enum Category {
+    Technology,
+    Science,
+    Arts,
+    Sports,
+    Business,
+}
+
+fn category_name(c: Category) -> string {
+    match c {
+        Category::Technology => "Technology",
+        Category::Science => "Science",
+        Category::Arts => "Arts",
+        Category::Sports => "Sports",
+        Category::Business => "Business",
+    }
+}
+
+fn category_weight(c: Category) -> int {
+    match c {
+        Category::Technology => 5,
+        Category::Science => 4,
+        Category::Arts => 3,
+        Category::Sports => 2,
+        Category::Business => 4,
+    }
+}
+
+// ============================================================
+// Part 2: Structs with impl blocks
+// ============================================================
+
+struct DataPoint {
+    id: int,
+    category: string,
+    value: int,
+    weight: int,
+}
+
+impl DataPoint {
+    fn weighted_value(self) -> int {
+        self.value * self.weight
+    }
+
+    fn display(self) {
+        println("  [", self.id, "]", self.category, ":", self.value, "(weight:", self.weight, ")")
+    }
+}
+
+struct Summary {
+    count: int,
+    total: int,
+    weighted_total: int,
+    min_val: int,
+    max_val: int,
+}
+
+impl Summary {
+    fn average(self) -> int {
+        if self.count > 0 { self.total / self.count } else { 0 }
+    }
+
+    fn weighted_average(self) -> int {
+        if self.count > 0 { self.weighted_total / self.count } else { 0 }
+    }
+
+    fn display(self) {
+        println("  Count:", self.count)
+        println("  Total:", self.total)
+        println("  Average:", self.average())
+        println("  Weighted Total:", self.weighted_total)
+        println("  Weighted Average:", self.weighted_average())
+        println("  Range:", self.min_val, "to", self.max_val)
+    }
+}
+
+// ============================================================
+// Part 3: Helper functions
+// ============================================================
+
+fn create_data(id: int, cat: string, value: int, weight: int) -> DataPoint {
+    DataPoint { id: id, category: cat, value: value, weight: weight }
+}
+
+fn compute_summary(data: [DataPoint]) -> Summary {
+    let mut count = 0
+    let mut total = 0
+    let mut weighted_total = 0
+    let mut min_val = 999999
+    let mut max_val = -999999
+
+    for dp in data {
+        count = count + 1
+        total = total + dp.value
+        weighted_total = weighted_total + dp.weighted_value()
+        if dp.value < min_val {
+            min_val = dp.value
+        }
+        if dp.value > max_val {
+            max_val = dp.value
+        }
+    }
+
+    Summary {
+        count: count,
+        total: total,
+        weighted_total: weighted_total,
+        min_val: min_val,
+        max_val: max_val,
+    }
+}
+
+fn is_prime(n: int) -> bool {
+    if n < 2 {
+        return false
+    }
+    let mut i = 2
+    while i * i <= n {
+        if n % i == 0 {
+            return false
+        }
+        i = i + 1
+    }
+    true
+}
+
+fn fibonacci(n: int) -> int {
+    if n <= 1 { n } else { fibonacci(n - 1) + fibonacci(n - 2) }
+}
+
+// ============================================================
+// Part 4: Main program
+// ============================================================
+
+fn main() {
+    println("╔══════════════════════════════════════════╗")
+    println("║      awesome_klik - KLIK Showcase        ║")
+    println("╚══════════════════════════════════════════╝")
+    println()
+
+    // ---- Feature 1: Enum pattern matching ----
+    println("=== Feature 1: Enums & Pattern Matching ===")
+    let categories = [
+        Category::Technology,
+        Category::Science,
+        Category::Arts,
+        Category::Sports,
+        Category::Business,
+    ]
+    for cat in categories {
+        println(" ", category_name(cat), "-> weight:", category_weight(cat))
+    }
+    println()
+
+    // ---- Feature 2: Struct construction & methods ----
+    println("=== Feature 2: Structs & Methods ===")
+    let dataset = [
+        create_data(1, "Technology", 95, 5),
+        create_data(2, "Science", 88, 4),
+        create_data(3, "Arts", 72, 3),
+        create_data(4, "Sports", 60, 2),
+        create_data(5, "Business", 91, 4),
+        create_data(6, "Technology", 87, 5),
+        create_data(7, "Science", 93, 4),
+        create_data(8, "Arts", 68, 3),
+        create_data(9, "Sports", 75, 2),
+        create_data(10, "Business", 82, 4),
+    ]
+
+    println("Dataset:")
+    for dp in dataset {
+        dp.display()
+    }
+    println()
+
+    // ---- Feature 3: Aggregation with loops ----
+    println("=== Feature 3: Data Aggregation ===")
+    let dataset2 = [
+        create_data(1, "Technology", 95, 5),
+        create_data(2, "Science", 88, 4),
+        create_data(3, "Arts", 72, 3),
+        create_data(4, "Sports", 60, 2),
+        create_data(5, "Business", 91, 4),
+        create_data(6, "Technology", 87, 5),
+        create_data(7, "Science", 93, 4),
+        create_data(8, "Arts", 68, 3),
+        create_data(9, "Sports", 75, 2),
+        create_data(10, "Business", 82, 4),
+    ]
+    let summary = compute_summary(dataset2)
+    summary.display()
+    println()
+
+    // ---- Feature 4: Pipeline operations ----
+    println("=== Feature 4: Pipeline Operations ===")
+    let values = [95, 88, 72, 60, 91, 87, 93, 68, 75, 82]
+
+    let high_values = values |> filter(|v| v >= 85) |> collect()
+    println("High values (>=85):", high_values)
+
+    let doubled_sum = values |> map(|v| v * 2) |> sum()
+    println("Sum of doubled values:", doubled_sum)
+
+    let above_avg = values |> filter(|v| v > 80) |> count()
+    println("Count above 80:", above_avg)
+
+    let max_val = values |> max()
+    println("Maximum:", max_val)
+
+    let min_val = values |> min()
+    println("Minimum:", min_val)
+
+    let top_3_sum = values |> filter(|v| v >= 91) |> sum()
+    println("Sum of top scores (>=91):", top_3_sum)
+    println()
+
+    // ---- Feature 5: Recursive algorithms ----
+    println("=== Feature 5: Recursion ===")
+    let fibs = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    print("Fibonacci sequence: ")
+    for n in fibs {
+        print(fibonacci(n), " ")
+    }
+    println()
+
+    println("Primes up to 50:")
+    let mut prime_count = 0
+    let mut n = 2
+    while n <= 50 {
+        if is_prime(n) {
+            print(n, " ")
+            prime_count = prime_count + 1
+        }
+        n = n + 1
+    }
+    println()
+    println("Found", prime_count, "primes")
+    println()
+
+    // ---- Feature 6: Control flow ----
+    println("=== Feature 6: Control Flow ===")
+    let test_values = [0, 1, -5, 100, 42, -1, 7, 0, 99, -42]
+    let mut positives = 0
+    let mut negatives = 0
+    let mut zeros = 0
+    for v in test_values {
+        if v > 0 {
+            positives = positives + 1
+        } else if v < 0 {
+            negatives = negatives + 1
+        } else {
+            zeros = zeros + 1
+        }
+    }
+    println("Positives:", positives, "Negatives:", negatives, "Zeros:", zeros)
+
+    // FizzBuzz (1-20)
+    println("FizzBuzz (1-20):")
+    let mut i = 1
+    while i <= 20 {
+        if i % 15 == 0 {
+            print("FizzBuzz ")
+        } else if i % 3 == 0 {
+            print("Fizz ")
+        } else if i % 5 == 0 {
+            print("Buzz ")
+        } else {
+            print(i, " ")
+        }
+        i = i + 1
+    }
+    println()
+    println()
+
+    // ---- Feature 7: Lambdas ----
+    println("=== Feature 7: Lambdas & Closures ===")
+    let numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    let squares = numbers |> map(|x| x * x) |> collect()
+    println("Squares:", squares)
+
+    let even_squares = numbers
+        |> map(|x| x * x)
+        |> filter(|x| x % 2 == 0)
+        |> collect()
+    println("Even squares:", even_squares)
+
+    let sum_of_cubes = numbers |> map(|x| x * x * x) |> sum()
+    println("Sum of cubes:", sum_of_cubes)
+    println()
+
+    // ---- Summary ----
+    println("╔══════════════════════════════════════════╗")
+    println("║          Showcase Complete!              ║")
+    println("║                                         ║")
+    println("║  Features demonstrated:                 ║")
+    println("║    1. Enums & Pattern Matching           ║")
+    println("║    2. Structs & Methods (impl/self)      ║")
+    println("║    3. Data Aggregation                   ║")
+    println("║    4. Pipeline Operations (|>)           ║")
+    println("║    5. Recursion (Fibonacci, Primes)      ║")
+    println("║    6. Control Flow (if/while/for)        ║")
+    println("║    7. Lambdas & Closures                 ║")
+    println("╚══════════════════════════════════════════╝")
+}

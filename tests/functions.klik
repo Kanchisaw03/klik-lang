@@ -1,0 +1,8 @@
+fn add(a: int, b: int) -> int {
+    a + b
+}
+
+fn main() {
+    let result = add(20, 22)
+    println(to_string(result))
+}

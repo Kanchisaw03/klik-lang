@@ -1,0 +1,16 @@
+[package]
+name = "klik-codegen"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+klik-ir = { workspace = true }
+klik-type-system = { workspace = true }
+cranelift = { workspace = true }
+cranelift-module = { workspace = true }
+cranelift-object = { workspace = true }
+cranelift-frontend = { workspace = true }
+cranelift-codegen = { workspace = true }
+cranelift-native = { workspace = true }
+target-lexicon = { workspace = true }
+anyhow = { workspace = true }

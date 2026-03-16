@@ -1,0 +1,178 @@
+// KLIK Task Scheduler Demo
+// Demonstrates priority-based task management
+
+enum Priority {
+    Critical,
+    High,
+    Medium,
+    Low,
+}
+
+enum Status {
+    Pending,
+    Running,
+    Done,
+}
+
+struct Task {
+    id: int,
+    name: string,
+    priority: int,
+    status: string,
+    duration: int,
+}
+
+fn priority_label(p: int) -> string {
+    if p >= 4 {
+        "CRITICAL"
+    } else if p >= 3 {
+        "HIGH"
+    } else if p >= 2 {
+        "MEDIUM"
+    } else {
+        "LOW"
+    }
+}
+
+fn create_task(id: int, name: string, priority: int, duration: int) -> Task {
+    Task { id: id, name: name, priority: priority, status: "pending", duration: duration }
+}
+
+fn display_task(t: Task) {
+    println("  [", t.id, "]", t.name, "- Priority:", priority_label(t.priority), "- Status:", t.status, "- Duration:", t.duration, "ms")
+}
+
+fn main() {
+    println("=== KLIK Task Scheduler ===")
+    println()
+
+    // Create task queue
+    let tasks = [
+        create_task(1, "Initialize system", 4, 100),
+        create_task(2, "Load config", 3, 50),
+        create_task(3, "Connect database", 4, 200),
+        create_task(4, "Start web server", 3, 150),
+        create_task(5, "Load plugins", 2, 80),
+        create_task(6, "Warm cache", 1, 300),
+        create_task(7, "Send notifications", 2, 120),
+        create_task(8, "Cleanup temp files", 1, 60),
+        create_task(9, "Health check", 3, 30),
+        create_task(10, "Sync state", 2, 90),
+    ]
+
+    // Display all tasks
+    println("--- All Tasks ---")
+    for t in tasks {
+        display_task(t)
+    }
+
+    // Process tasks by priority (highest first)
+    println()
+    println("--- Processing Order ---")
+
+    // Critical tasks first (priority 4)
+    println("Phase 1: Critical tasks")
+    let tasks2 = [
+        create_task(1, "Initialize system", 4, 100),
+        create_task(2, "Load config", 3, 50),
+        create_task(3, "Connect database", 4, 200),
+        create_task(4, "Start web server", 3, 150),
+        create_task(5, "Load plugins", 2, 80),
+        create_task(6, "Warm cache", 1, 300),
+        create_task(7, "Send notifications", 2, 120),
+        create_task(8, "Cleanup temp files", 1, 60),
+        create_task(9, "Health check", 3, 30),
+        create_task(10, "Sync state", 2, 90),
+    ]
+    let mut critical_time = 0
+    for t in tasks2 {
+        if t.priority == 4 {
+            println("  Running:", t.name)
+            critical_time = critical_time + t.duration
+        }
+    }
+    println("  Critical phase time:", critical_time, "ms")
+
+    // High tasks (priority 3)
+    println("Phase 2: High priority tasks")
+    let tasks3 = [
+        create_task(1, "Initialize system", 4, 100),
+        create_task(2, "Load config", 3, 50),
+        create_task(3, "Connect database", 4, 200),
+        create_task(4, "Start web server", 3, 150),
+        create_task(5, "Load plugins", 2, 80),
+        create_task(6, "Warm cache", 1, 300),
+        create_task(7, "Send notifications", 2, 120),
+        create_task(8, "Cleanup temp files", 1, 60),
+        create_task(9, "Health check", 3, 30),
+        create_task(10, "Sync state", 2, 90),
+    ]
+    let mut high_time = 0
+    for t in tasks3 {
+        if t.priority == 3 {
+            println("  Running:", t.name)
+            high_time = high_time + t.duration
+        }
+    }
+    println("  High phase time:", high_time, "ms")
+
+    // Medium tasks (priority 2)
+    println("Phase 3: Medium priority tasks")
+    let tasks4 = [
+        create_task(1, "Initialize system", 4, 100),
+        create_task(2, "Load config", 3, 50),
+        create_task(3, "Connect database", 4, 200),
+        create_task(4, "Start web server", 3, 150),
+        create_task(5, "Load plugins", 2, 80),
+        create_task(6, "Warm cache", 1, 300),
+        create_task(7, "Send notifications", 2, 120),
+        create_task(8, "Cleanup temp files", 1, 60),
+        create_task(9, "Health check", 3, 30),
+        create_task(10, "Sync state", 2, 90),
+    ]
+    let mut med_time = 0
+    for t in tasks4 {
+        if t.priority == 2 {
+            println("  Running:", t.name)
+            med_time = med_time + t.duration
+        }
+    }
+    println("  Medium phase time:", med_time, "ms")
+
+    // Low tasks (priority 1)
+    println("Phase 4: Low priority tasks")
+    let tasks5 = [
+        create_task(1, "Initialize system", 4, 100),
+        create_task(2, "Load config", 3, 50),
+        create_task(3, "Connect database", 4, 200),
+        create_task(4, "Start web server", 3, 150),
+        create_task(5, "Load plugins", 2, 80),
+        create_task(6, "Warm cache", 1, 300),
+        create_task(7, "Send notifications", 2, 120),
+        create_task(8, "Cleanup temp files", 1, 60),
+        create_task(9, "Health check", 3, 30),
+        create_task(10, "Sync state", 2, 90),
+    ]
+    let mut low_time = 0
+    for t in tasks5 {
+        if t.priority == 1 {
+            println("  Running:", t.name)
+            low_time = low_time + t.duration
+        }
+    }
+    println("  Low phase time:", low_time, "ms")
+
+    // Summary
+    let total_time = critical_time + high_time + med_time + low_time
+    println()
+    println("--- Schedule Summary ---")
+    println("Total execution time:", total_time, "ms")
+    println("Phases completed: 4")
+
+    // Pipeline: compute durations
+    let durations = [100, 50, 200, 150, 80, 300, 120, 60, 30, 90]
+    let total_check = durations |> sum()
+    println("Pipeline sum check:", total_check, "ms")
+    let long_tasks = durations |> filter(|d| d >= 100) |> count()
+    println("Long tasks (>=100ms):", long_tasks)
+}

@@ -1,0 +1,67 @@
+// KLIK CLI Todo App Demo
+// A simple command-line todo list manager
+
+struct TodoItem {
+    id: int,
+    title: string,
+    done: bool,
+}
+
+impl TodoItem {
+    fn display(self) -> string {
+        if self.done {
+            "[x]"
+        } else {
+            "[ ]"
+        }
+    }
+}
+
+fn create_sample_todos() -> [TodoItem] {
+    [
+        TodoItem { id: 1, title: "Learn KLIK", done: true },
+        TodoItem { id: 2, title: "Build a compiler", done: true },
+        TodoItem { id: 3, title: "Write tests", done: false },
+        TodoItem { id: 4, title: "Deploy to production", done: false },
+        TodoItem { id: 5, title: "Celebrate", done: false },
+    ]
+}
+
+fn count_done(todos: [TodoItem]) -> int {
+    let mut count = 0
+    for todo in todos {
+        if todo.done {
+            count = count + 1
+        }
+    }
+    count
+}
+
+fn main() {
+    println("=============================")
+    println("    KLIK Todo Manager")
+    println("=============================")
+    println()
+
+    let todos = create_sample_todos()
+
+    for todo in todos {
+        let status = todo.display()
+        println(status, todo.id, "-", todo.title)
+    }
+
+    let todos2 = create_sample_todos()
+    let done = count_done(todos2)
+    let total = 5
+
+    println()
+    println("Progress:", done, "/", total, "completed")
+    println()
+
+    if done == total {
+        println("All tasks complete! Great job!")
+    } else {
+        let remaining = total - done
+        println(remaining, "tasks remaining. Keep going!")
+    }
+}

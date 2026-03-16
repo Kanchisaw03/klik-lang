@@ -1,0 +1,126 @@
+// KLIK Game of Life Demo
+// Simplified cellular automaton simulation
+
+fn count_neighbors(grid: [int], width: int, height: int, x: int, y: int) -> int {
+    let mut count = 0
+    let mut dy = -1
+    while dy <= 1 {
+        let mut dx = -1
+        while dx <= 1 {
+            if dx == 0 && dy == 0 {
+                dx = dx + 1
+                // skip self
+            } else {
+                let nx = x + dx
+                let ny = y + dy
+                if nx >= 0 && nx < width && ny >= 0 && ny < height {
+                    let idx = ny * width + nx
+                    if grid[idx] == 1 {
+                        count = count + 1
+                    }
+                }
+                dx = dx + 1
+            }
+        }
+        dy = dy + 1
+    }
+    count
+}
+
+fn print_grid(grid: [int], width: int, height: int) {
+    let mut y = 0
+    while y < height {
+        let mut line = ""
+        let mut x = 0
+        while x < width {
+            let idx = y * width + x
+            if grid[idx] == 1 {
+                line = line + "#"
+            } else {
+                line = line + "."
+            }
+            x = x + 1
+        }
+        println(line)
+        y = y + 1
+    }
+}
+
+fn count_alive(grid: [int]) -> int {
+    let mut count = 0
+    for cell in grid {
+        if cell == 1 {
+            count = count + 1
+        }
+    }
+    count
+}
+
+fn main() {
+    println("=== KLIK Game of Life ===")
+    let width = 10
+    let height = 8
+
+    // Create initial grid with a glider pattern
+    // Using a flat array (width * height)
+    let mut grid = [
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 1, 0, 0, 0, 0, 0, 0,
+        0, 1, 1, 1, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    ]
+
+    println("Generation 0:")
+    print_grid(grid, width, height)
+    println("Alive cells:", count_alive(grid))
+
+    // Simulate 3 generations
+    let mut gen = 0
+    while gen < 3 {
+        // Build next generation
+        let mut next = [
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        ]
+        let mut y = 0
+        while y < height {
+            let mut x = 0
+            while x < width {
+                let idx = y * width + x
+                let neighbors = count_neighbors(grid, width, height, x, y)
+                if grid[idx] == 1 {
+                    // Alive: survive with 2 or 3 neighbors
+                    if neighbors == 2 || neighbors == 3 {
+                        next[idx] = 1
+                    }
+                } else {
+                    // Dead: birth with exactly 3 neighbors
+                    if neighbors == 3 {
+                        next[idx] = 1
+                    }
+                }
+                x = x + 1
+            }
+            y = y + 1
+        }
+        grid = next
+        gen = gen + 1
+        println()
+        println("Generation", gen, ":")
+        print_grid(grid, width, height)
+        println("Alive cells:", count_alive(grid))
+    }
+
+    println()
+    println("Simulation complete!")
+}

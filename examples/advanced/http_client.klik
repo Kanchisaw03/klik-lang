@@ -1,0 +1,89 @@
+// KLIK HTTP Client Simulation Demo
+// Demonstrates string processing and data structures
+
+enum Method {
+    Get,
+    Post,
+    Put,
+    Delete,
+}
+
+struct HttpRequest {
+    method: Method,
+    url: string,
+    status: int,
+}
+
+struct HttpResponse {
+    status_code: int,
+    body: string,
+}
+
+impl HttpResponse {
+    fn is_success(self) -> bool {
+        self.status_code >= 200 && self.status_code < 300
+    }
+
+    fn is_error(self) -> bool {
+        self.status_code >= 400
+    }
+}
+
+fn method_name(m: Method) -> string {
+    match m {
+        Method::Get => "GET",
+        Method::Post => "POST",
+        Method::Put => "PUT",
+        Method::Delete => "DELETE",
+    }
+}
+
+fn simulate_request(req: HttpRequest) -> HttpResponse {
+    println("  ->", method_name(req.method), req.url)
+
+    // Simulate responses based on status
+    if req.status == 200 {
+        HttpResponse { status_code: 200, body: "OK" }
+    } else if req.status == 404 {
+        HttpResponse { status_code: 404, body: "Not Found" }
+    } else if req.status == 500 {
+        HttpResponse { status_code: 500, body: "Internal Server Error" }
+    } else {
+        HttpResponse { status_code: req.status, body: "Unknown" }
+    }
+}
+
+fn main() {
+    println("=== KLIK HTTP Client ===")
+    println()
+
+    let requests = [
+        HttpRequest { method: Method::Get, url: "/api/users", status: 200 },
+        HttpRequest { method: Method::Post, url: "/api/users", status: 200 },
+        HttpRequest { method: Method::Get, url: "/api/users/999", status: 404 },
+        HttpRequest { method: Method::Put, url: "/api/users/1", status: 200 },
+        HttpRequest { method: Method::Delete, url: "/api/sessions", status: 200 },
+        HttpRequest { method: Method::Get, url: "/api/error", status: 500 },
+    ]
+
+    println("Sending requests:")
+    let mut success_count = 0
+    let mut error_count = 0
+
+    for req in requests {
+        let resp = simulate_request(req)
+        if resp.is_success() {
+            println("  <-", resp.status_code, resp.body)
+            success_count = success_count + 1
+        } else {
+            println("  <- ERROR", resp.status_code, resp.body)
+            error_count = error_count + 1
+        }
+    }
+
+    println()
+    println("Results:")
+    println("  Successful:", success_count)
+    println("  Failed:", error_count)
+    println("  Total:", success_count + error_count)
+}

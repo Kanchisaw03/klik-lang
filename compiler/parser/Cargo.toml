@@ -1,0 +1,10 @@
+[package]
+name = "klik-parser"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+klik-ast = { workspace = true }
+klik-lexer = { workspace = true }
+thiserror = { workspace = true }
+ariadne = { workspace = true }

@@ -1,0 +1,74 @@
+[workspace]
+resolver = "2"
+members = [
+    "compiler/lexer",
+    "compiler/parser",
+    "compiler/ast",
+    "compiler/semantic",
+    "compiler/type_system",
+    "compiler/ir",
+    "compiler/opt",
+    "compiler/optimizer",
+    "compiler/codegen",
+    "compiler/incremental",
+    "runtime",
+    "stdlib",
+    "package_manager",
+    "cli",
+    "lsp",
+    "formatter",
+    "linter",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/klik-lang/klik"
+
+[workspace.dependencies]
+# Internal crates
+klik-lexer = { path = "compiler/lexer" }
+klik-parser = { path = "compiler/parser" }
+klik-ast = { path = "compiler/ast" }
+klik-semantic = { path = "compiler/semantic" }
+klik-type-system = { path = "compiler/type_system" }
+klik-ir = { path = "compiler/ir" }
+klik-opt = { path = "compiler/opt" }
+klik-optimizer = { path = "compiler/optimizer" }
+klik-codegen = { path = "compiler/codegen" }
+klik-incremental = { path = "compiler/incremental" }
+klik-runtime = { path = "runtime" }
+klik-stdlib = { path = "stdlib" }
+klik-package-manager = { path = "package_manager" }
+klik-lsp = { path = "lsp" }
+klik-formatter = { path = "formatter" }
+klik-linter = { path = "linter" }
+
+# External dependencies
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+toml = "0.8"
+clap = { version = "4", features = ["derive"] }
+cranelift = "0.116"
+cranelift-module = "0.116"
+cranelift-object = "0.116"
+cranelift-frontend = "0.116"
+cranelift-codegen = "0.116"
+cranelift-native = "0.116"
+cranelift-wasm = "0.116"
+target-lexicon = "0.13"
+notify = "7"
+tower-lsp = "0.20"
+tokio = { version = "1", features = ["full"] }
+sha2 = "0.10"
+semver = "1"
+walkdir = "2"
+colored = "2"
+thiserror = "2"
+anyhow = "1"
+dashmap = "6"
+parking_lot = "0.12"
+petgraph = "0.7"
+ariadne = "0.4"
+logos = "0.14"

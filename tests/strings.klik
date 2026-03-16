@@ -1,0 +1,4 @@
+fn main() {
+    let text = "String test"
+    println(text)
+}

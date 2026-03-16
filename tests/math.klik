@@ -1,0 +1,4 @@
+fn main() {
+    let value = 6 * 7
+    println(to_string(value))
+}

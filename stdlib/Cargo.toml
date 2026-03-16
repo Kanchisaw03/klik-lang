@@ -1,0 +1,7 @@
+[package]
+name = "klik-stdlib"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+klik-runtime = { workspace = true }

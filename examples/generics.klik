@@ -1,0 +1,86 @@
+// Generics and traits in KLIK
+
+trait Display {
+    fn display(self) -> string
+}
+
+trait Comparable<T> {
+    fn compare(self, other: T) -> int
+}
+
+struct Pair<A, B> {
+    first: A,
+    second: B,
+}
+
+impl<A, B> Pair<A, B> {
+    fn new(first: A, second: B) -> Pair<A, B> {
+        Pair { first: first, second: second }
+    }
+
+    fn swap(self) -> Pair<B, A> {
+        Pair { first: self.second, second: self.first }
+    }
+}
+
+// Generic function
+fn max<T: Comparable<T>>(a: T, b: T) -> T {
+    if a.compare(b) > 0 {
+        a
+    } else {
+        b
+    }
+}
+
+// Generic linked list
+enum List<T> {
+    Cons(T, List<T>),
+    Nil,
+}
+
+fn length<T>(list: List<T>) -> int {
+    match list {
+        List::Cons(_, rest) => 1 + length(rest),
+        List::Nil => 0,
+    }
+}
+
+// Option type (built-in pattern)
+enum Option<T> {
+    Some(T),
+    None,
+}
+
+fn unwrap_or<T>(opt: Option<T>, default: T) -> T {
+    match opt {
+        Option::Some(value) => value,
+        Option::None => default,
+    }
+}
+
+// Result type for error handling
+enum Result<T, E> {
+    Ok(T),
+    Err(E),
+}
+
+fn map_result<T, U, E>(result: Result<T, E>, f: fn(T) -> U) -> Result<U, E> {
+    match result {
+        Result::Ok(value) => Result::Ok(f(value)),
+        Result::Err(e) => Result::Err(e),
+    }
+}
+
+fn main() {
+    let pair = Pair::new(1, "hello")
+    let swapped = pair.swap()
+
+    let list = List::Cons(1, List::Cons(2, List::Cons(3, List::Nil)))
+    let len = length(list)
+    println("List length: ")
+    println(to_string(len))
+
+    let val = unwrap_or(Option::Some(42), 0)
+    println("Value: ")
+    println(to_string(val))
+}

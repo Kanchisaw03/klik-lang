@@ -1,0 +1,34 @@
+# Rust/Cargo build artifacts
+/target/
+**/target/
+
+# Generated binaries/objects from klik build and demo runs
+/*.exe
+/*.dll
+/*.pdb
+/*.ilk
+/*.lib
+/*.exp
+/*.o
+/*.obj
+
+# Generated compiler/debug outputs at repo root
+/*.ir
+/*.dot
+/*.log
+/*_output.txt
+/rust_output.txt
+
+# Visualization outputs are kept locally but not tracked
+/visualization/*.dot
+/visualization/*.png
+/visualization/pipeline.html
+
+# Editor/OS clutter
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db

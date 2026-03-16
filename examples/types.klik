@@ -1,0 +1,64 @@
+// Structs, enums and pattern matching in KLIK
+
+struct Point {
+    x: f64,
+    y: f64,
+}
+
+impl Point {
+    fn new(x: f64, y: f64) -> Point {
+        Point { x: x, y: y }
+    }
+
+    fn distance(self, other: Point) -> f64 {
+        let dx = self.x - other.x
+        let dy = self.y - other.y
+        (dx * dx + dy * dy) |> sqrt
+    }
+
+    fn translate(self, dx: f64, dy: f64) -> Point {
+        Point { x: self.x + dx, y: self.y + dy }
+    }
+}
+
+enum Shape {
+    Circle(f64),
+    Rectangle(f64, f64),
+    Triangle(Point, Point, Point),
+}
+
+fn area(shape: Shape) -> f64 {
+    match shape {
+        Shape::Circle(radius) => 3.14159265 * radius * radius,
+        Shape::Rectangle(w, h) => w * h,
+        Shape::Triangle(a, b, c) => {
+            // Shoelace formula
+            let result = (a.x * (b.y - c.y) + b.x * (c.y - a.y) + c.x * (a.y - b.y)) / 2.0
+            if result < 0.0 { -result } else { result }
+        },
+    }
+}
+
+fn describe(shape: Shape) -> string {
+    match shape {
+        Shape::Circle(_) => "circle",
+        Shape::Rectangle(_, _) => "rectangle",
+        Shape::Triangle(_, _, _) => "triangle",
+    }
+}
+
+fn main() {
+    let origin = Point::new(0.0, 0.0)
+    let p = Point::new(3.0, 4.0)
+    println("Distance from origin: ")
+    println(to_string(origin.distance(p)))
+
+    let circle = Shape::Circle(5.0)
+    let rect = Shape::Rectangle(10.0, 20.0)
+
+    println("Circle area: ")
+    println(to_string(area(circle)))
+
+    println("Rectangle area: ")
+    println(to_string(area(rect)))
+}

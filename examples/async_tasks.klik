@@ -1,0 +1,31 @@
+// Async programming in KLIK
+
+async fn fetch_data(url: string) -> string {
+    // Simulated async operation
+    println("Fetching: ")
+    println(url)
+    "data"
+}
+
+async fn process_item(item: string) -> string {
+    println("Processing: ")
+    println(item)
+    item
+}
+
+async fn main() {
+    // Sequential async
+    let data = fetch_data("https://example.com/api").await
+
+    // Spawn concurrent tasks
+    let task1 = spawn process_item("item_1")
+    let task2 = spawn process_item("item_2")
+    let task3 = spawn process_item("item_3")
+
+    // Await results
+    let r1 = task1.await
+    let r2 = task2.await
+    let r3 = task3.await
+
+    println("All tasks complete!")
+}

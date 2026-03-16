@@ -1,0 +1,17 @@
+[package]
+name = "klik-lsp"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+klik-lexer = { workspace = true }
+klik-parser = { workspace = true }
+klik-ast = { workspace = true }
+klik-semantic = { workspace = true }
+klik-type-system = { workspace = true }
+klik-formatter = { workspace = true }
+tower-lsp = { workspace = true }
+tokio = { workspace = true }
+dashmap = { workspace = true }
+serde_json = { workspace = true }
+anyhow = { workspace = true }

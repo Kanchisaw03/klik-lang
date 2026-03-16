@@ -1,0 +1,120 @@
+// KLIK Parallel Prime Calculator
+// Sieve of Eratosthenes and primality testing
+
+fn is_prime(n: int) -> bool {
+    if n < 2 {
+        return false
+    }
+    if n < 4 {
+        return true
+    }
+    if n % 2 == 0 || n % 3 == 0 {
+        return false
+    }
+    let mut i = 5
+    while i * i <= n {
+        if n % i == 0 || n % (i + 2) == 0 {
+            return false
+        }
+        i = i + 6
+    }
+    true
+}
+
+fn count_primes_in_range(start: int, end: int) -> int {
+    let mut count = 0
+    let mut n = start
+    while n <= end {
+        if is_prime(n) {
+            count = count + 1
+        }
+        n = n + 1
+    }
+    count
+}
+
+fn nth_prime(n: int) -> int {
+    let mut count = 0
+    let mut candidate = 2
+    while count < n {
+        if is_prime(candidate) {
+            count = count + 1
+            if count == n {
+                return candidate
+            }
+        }
+        candidate = candidate + 1
+    }
+    candidate
+}
+
+fn sum_primes_below(limit: int) -> int {
+    let mut sum = 0
+    let mut n = 2
+    while n < limit {
+        if is_prime(n) {
+            sum = sum + n
+        }
+        n = n + 1
+    }
+    sum
+}
+
+fn goldbach(n: int) -> bool {
+    // Check if even number > 2 can be written as sum of two primes
+    if n % 2 != 0 || n <= 2 {
+        return false
+    }
+    let mut i = 2
+    while i <= n / 2 {
+        if is_prime(i) && is_prime(n - i) {
+            return true
+        }
+        i = i + 1
+    }
+    false
+}
+
+fn main() {
+    println("=== KLIK Prime Calculator ===")
+    println()
+
+    // Count primes in ranges
+    let count_100 = count_primes_in_range(1, 100)
+    let count_1000 = count_primes_in_range(1, 1000)
+
+    println("Primes up to 100:", count_100)
+    println("Primes up to 1000:", count_1000)
+    println()
+
+    // Find specific primes
+    println("First 10 primes:")
+    let mut i = 1
+    while i <= 10 {
+        let p = nth_prime(i)
+        println("  Prime #", i, "=", p)
+        i = i + 1
+    }
+    println()
+
+    // Sum of primes
+    let sum = sum_primes_below(100)
+    println("Sum of primes below 100:", sum)
+    println()
+
+    // Goldbach's conjecture verification
+    println("Goldbach verification (even numbers 4-20):")
+    let mut n = 4
+    while n <= 20 {
+        let valid = goldbach(n)
+        if valid {
+            println("  ", n, "= sum of two primes: YES")
+        } else {
+            println("  ", n, "= sum of two primes: NO")
+        }
+        n = n + 2
+    }
+
+    println()
+    println("Calculation complete!")
+}

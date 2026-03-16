@@ -1,0 +1,31 @@
+[package]
+name = "klik-cli"
+version.workspace = true
+edition.workspace = true
+
+[[bin]]
+name = "klik"
+path = "src/main.rs"
+
+[dependencies]
+klik-lexer = { workspace = true }
+klik-parser = { workspace = true }
+klik-ast = { workspace = true }
+klik-semantic = { workspace = true }
+klik-type-system = { workspace = true }
+klik-ir = { workspace = true }
+klik-opt = { workspace = true }
+klik-optimizer = { workspace = true }
+klik-codegen = { workspace = true }
+klik-incremental = { workspace = true }
+klik-runtime = { workspace = true }
+klik-stdlib = { workspace = true }
+klik-package-manager = { workspace = true }
+klik-formatter = { workspace = true }
+klik-linter = { workspace = true }
+klik-lsp = { workspace = true }
+clap = { workspace = true }
+colored = { workspace = true }
+notify = { workspace = true }
+anyhow = { workspace = true }
+tokio = { workspace = true }

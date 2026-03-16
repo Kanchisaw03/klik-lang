@@ -1,0 +1,138 @@
+// KLIK Web Server Simulator Demo
+// Demonstrates request/response handling with structs and pattern matching
+
+enum Method {
+    GET,
+    POST,
+    PUT,
+    DELETE,
+}
+
+struct Request {
+    method: string,
+    path: string,
+    body: string,
+}
+
+struct Response {
+    status: int,
+    message: string,
+}
+
+fn status_text(code: int) -> string {
+    if code == 200 {
+        "OK"
+    } else if code == 201 {
+        "Created"
+    } else if code == 204 {
+        "No Content"
+    } else if code == 400 {
+        "Bad Request"
+    } else if code == 404 {
+        "Not Found"
+    } else if code == 405 {
+        "Method Not Allowed"
+    } else {
+        "Unknown"
+    }
+}
+
+fn handle_request(req: Request) -> Response {
+    // Route: GET /
+    if req.method == "GET" && req.path == "/" {
+        return Response { status: 200, message: "Welcome to KLIK Web Server!" }
+    }
+
+    // Route: GET /about
+    if req.method == "GET" && req.path == "/about" {
+        return Response { status: 200, message: "KLIK Language v0.1.0" }
+    }
+
+    // Route: GET /users
+    if req.method == "GET" && req.path == "/users" {
+        return Response { status: 200, message: "Users: Alice, Bob, Charlie" }
+    }
+
+    // Route: POST /users
+    if req.method == "POST" && req.path == "/users" {
+        return Response { status: 201, message: "User created: " + req.body }
+    }
+
+    // Route: PUT /users
+    if req.method == "PUT" && req.path == "/users" {
+        return Response { status: 200, message: "User updated: " + req.body }
+    }
+
+    // Route: DELETE /users
+    if req.method == "DELETE" && req.path == "/users" {
+        return Response { status: 204, message: "User deleted" }
+    }
+
+    // Route: GET /health
+    if req.method == "GET" && req.path == "/health" {
+        return Response { status: 200, message: "OK" }
+    }
+
+    // Not found
+    Response { status: 404, message: "Route not found: " + req.method + " " + req.path }
+}
+
+fn log_request(req: Request, resp: Response) {
+    println("[", resp.status, status_text(resp.status), "]", req.method, req.path, "->", resp.message)
+}
+
+fn main() {
+    println("=== KLIK Web Server Simulator ===")
+    println()
+
+    // Simulate incoming requests
+    let requests = [
+        Request { method: "GET", path: "/", body: "" },
+        Request { method: "GET", path: "/about", body: "" },
+        Request { method: "GET", path: "/users", body: "" },
+        Request { method: "POST", path: "/users", body: "Diana" },
+        Request { method: "PUT", path: "/users", body: "Eve" },
+        Request { method: "DELETE", path: "/users", body: "" },
+        Request { method: "GET", path: "/health", body: "" },
+        Request { method: "GET", path: "/unknown", body: "" },
+        Request { method: "POST", path: "/admin", body: "hack" },
+    ]
+
+    println("--- Request Log ---")
+    let mut ok_count = 0
+    let mut created_count = 0
+    let mut not_found_count = 0
+    let mut other_count = 0
+
+    for req in requests {
+        let resp = handle_request(req)
+        log_request(req, resp)
+        if resp.status == 200 {
+            ok_count = ok_count + 1
+        } else if resp.status == 201 {
+            created_count = created_count + 1
+        } else if resp.status == 404 {
+            not_found_count = not_found_count + 1
+        } else {
+            other_count = other_count + 1
+        }
+    }
+
+    // Summary
+    println()
+    println("--- Server Stats ---")
+    println("Total requests: 9")
+    println("200 OK:", ok_count)
+    println("201 Created:", created_count)
+    println("404 Not Found:", not_found_count)
+    println("Other:", other_count)
+
+    // Pipeline: status codes
+    let codes = [200, 200, 200, 201, 200, 204, 200, 404, 404]
+    let success = codes |> filter(|c| c >= 200 && c < 300) |> count()
+    let errors = codes |> filter(|c| c >= 400) |> count()
+    println()
+    println("--- Pipeline Analysis ---")
+    println("Success responses (2xx):", success)
+    println("Error responses (4xx+):", errors)
+}

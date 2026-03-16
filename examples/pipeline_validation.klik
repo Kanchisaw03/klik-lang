@@ -1,0 +1,16 @@
+// KLIK Pipeline Validation
+// Validates the full pipeline: parse → typecheck → transpile → compile → run
+// Tests: array literal |> map |> filter |> sum
+
+fn main() {
+    let result = [1, 2, 3, 4, 5] |> map(|x| x * 2) |> filter(|x| x > 4) |> sum()
+    println("Pipeline result:", result)
+
+    // Verify correctness:
+    // [1,2,3,4,5] -> map(*2) -> [2,4,6,8,10] -> filter(>4) -> [6,8,10] -> sum -> 24
+    if result == 24 {
+        println("PASS: Pipeline produced correct result!")
+    } else {
+        println("FAIL: Expected 24, got", result)
+    }
+}

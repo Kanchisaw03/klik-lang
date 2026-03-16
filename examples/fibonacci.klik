@@ -1,0 +1,34 @@
+// Fibonacci sequence in KLIK
+
+fn fibonacci(n: int) -> int {
+    if n <= 1 {
+        n
+    } else {
+        fibonacci(n - 1) + fibonacci(n - 2)
+    }
+}
+
+fn fibonacci_iterative(n: int) -> int {
+    let mut a = 0
+    let mut b = 1
+    for i in 0..n {
+        let temp = b
+        b = a + b
+        a = temp
+    }
+    a
+}
+
+fn main() {
+    println("Fibonacci (recursive):")
+    for i in 0..10 {
+        let result = fibonacci(i)
+        println(to_string(result))
+    }
+
+    println("Fibonacci (iterative):")
+    for i in 0..20 {
+        let result = fibonacci_iterative(i)
+        println(to_string(result))
+    }
+}

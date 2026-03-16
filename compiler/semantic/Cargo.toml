@@ -1,0 +1,13 @@
+[package]
+name = "klik-semantic"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+klik-ast = { workspace = true }
+klik-type-system = { workspace = true }
+thiserror = { workspace = true }
+
+[dev-dependencies]
+klik-lexer = { workspace = true }
+klik-parser = { workspace = true }

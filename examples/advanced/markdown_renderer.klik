@@ -1,0 +1,117 @@
+// KLIK Markdown Renderer Demo
+// Demonstrates string processing and enum-based document model
+
+enum NodeKind {
+    Heading1,
+    Heading2,
+    Heading3,
+    Paragraph,
+    CodeBlock,
+    ListItem,
+    HorizontalRule,
+}
+
+struct DocNode {
+    kind: NodeKind,
+    text: string,
+}
+
+fn render_prefix(kind: NodeKind) -> string {
+    match kind {
+        NodeKind::Heading1 => "# ",
+        NodeKind::Heading2 => "## ",
+        NodeKind::Heading3 => "### ",
+        NodeKind::Paragraph => "",
+        NodeKind::CodeBlock => "    ",
+        NodeKind::ListItem => "  - ",
+        NodeKind::HorizontalRule => "---",
+    }
+}
+
+fn kind_name(kind: NodeKind) -> string {
+    match kind {
+        NodeKind::Heading1 => "H1",
+        NodeKind::Heading2 => "H2",
+        NodeKind::Heading3 => "H3",
+        NodeKind::Paragraph => "P",
+        NodeKind::CodeBlock => "CODE",
+        NodeKind::ListItem => "LI",
+        NodeKind::HorizontalRule => "HR",
+    }
+}
+
+fn render_node(node: DocNode) {
+    let prefix = render_prefix(node.kind)
+    print(prefix)
+    println(node.text)
+}
+
+fn create_document() -> [DocNode] {
+    [
+        DocNode { kind: NodeKind::Heading1, text: "KLIK Language Guide" },
+        DocNode { kind: NodeKind::Paragraph, text: "A modern systems programming language." },
+        DocNode { kind: NodeKind::HorizontalRule, text: "" },
+        DocNode { kind: NodeKind::Heading2, text: "Features" },
+        DocNode { kind: NodeKind::ListItem, text: "Type inference" },
+        DocNode { kind: NodeKind::ListItem, text: "Pattern matching" },
+        DocNode { kind: NodeKind::ListItem, text: "Pipe operator" },
+        DocNode { kind: NodeKind::ListItem, text: "Async/await" },
+        DocNode { kind: NodeKind::Paragraph, text: "KLIK compiles to native code via Rust." },
+        DocNode { kind: NodeKind::Heading2, text: "Example" },
+        DocNode { kind: NodeKind::CodeBlock, text: "fn main() {" },
+        DocNode { kind: NodeKind::CodeBlock, text: "    println(\"Hello KLIK\")" },
+        DocNode { kind: NodeKind::CodeBlock, text: "}" },
+        DocNode { kind: NodeKind::HorizontalRule, text: "" },
+        DocNode { kind: NodeKind::Heading3, text: "Getting Started" },
+        DocNode { kind: NodeKind::Paragraph, text: "Install KLIK and create your first project." },
+    ]
+}
+
+fn main() {
+    println("=== KLIK Markdown Renderer ===")
+    println()
+
+    let doc = create_document()
+
+    // Render the document
+    println("--- Rendered Output ---")
+    for node in doc {
+        render_node(node)
+    }
+
+    // Document statistics
+    let doc2 = create_document()
+    let mut heading_count = 0
+    let mut para_count = 0
+    let mut list_count = 0
+    let mut code_count = 0
+    let mut hr_count = 0
+
+    for node in doc2 {
+        let k = kind_name(node.kind)
+        if k == "H1" || k == "H2" || k == "H3" {
+            heading_count = heading_count + 1
+        }
+        if k == "P" {
+            para_count = para_count + 1
+        }
+        if k == "LI" {
+            list_count = list_count + 1
+        }
+        if k == "CODE" {
+            code_count = code_count + 1
+        }
+        if k == "HR" {
+            hr_count = hr_count + 1
+        }
+    }
+
+    println()
+    println("--- Document Stats ---")
+    println("Headings:", heading_count)
+    println("Paragraphs:", para_count)
+    println("List items:", list_count)
+    println("Code lines:", code_count)
+    println("Horizontal rules:", hr_count)
+    println("Total nodes:", heading_count + para_count + list_count + code_count + hr_count)
+}

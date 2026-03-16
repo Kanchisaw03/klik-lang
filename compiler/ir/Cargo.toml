@@ -1,0 +1,13 @@
+[package]
+name = "klik-ir"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+klik-ast = { workspace = true }
+klik-type-system = { workspace = true }
+petgraph = { workspace = true }
+
+[dev-dependencies]
+klik-lexer = { workspace = true }
+klik-parser = { workspace = true }

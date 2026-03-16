@@ -1,0 +1,63 @@
+// KLIK Pipeline & Functional Programming Showcase
+// Demonstrates the |> pipe operator, lambdas, and collections
+
+fn fibonacci(n: int) -> int {
+    if n <= 1 {
+        n
+    } else {
+        fibonacci(n - 1) + fibonacci(n - 2)
+    }
+}
+
+fn is_even(x: int) -> bool {
+    x % 2 == 0
+}
+
+fn square(x: int) -> int {
+    x * x
+}
+
+fn main() {
+    // Pipeline: generate, transform, filter, aggregate
+    let numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+    let result =
+        numbers
+        |> map(|x| x * 2)
+        |> filter(|x| x > 5)
+        |> sum()
+
+    println("Sum of doubled numbers > 5:", result)
+
+    // Fibonacci pipeline
+    let fib_sum =
+        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        |> map(|n| fibonacci(n))
+        |> filter(|x| is_even(x))
+        |> sum()
+
+    println("Sum of even Fibonacci numbers (0-10):", fib_sum)
+
+    // Chained transformations
+    let squares =
+        [1, 2, 3, 4, 5]
+        |> map(|x| square(x))
+        |> collect()
+
+    println("Squares:", squares)
+
+    // Count elements matching a predicate
+    let even_count =
+        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        |> filter(|x| x % 2 == 0)
+        |> count()
+
+    println("Even numbers count:", even_count)
+
+    // Fold / reduce
+    let product =
+        [1, 2, 3, 4, 5]
+        |> fold(1, |acc, x| acc * x)
+
+    println("Product 1..5:", product)
+}

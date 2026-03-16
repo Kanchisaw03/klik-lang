@@ -1,0 +1,127 @@
+// KLIK Mini Database Demo
+// Demonstrates in-memory record storage with structs and arrays
+
+struct Record {
+    id: int,
+    name: string,
+    score: int,
+    active: bool,
+}
+
+struct QueryResult {
+    count: int,
+    total_score: int,
+    avg_score: int,
+}
+
+fn create_record(id: int, name: string, score: int, active: bool) -> Record {
+    Record { id: id, name: name, score: score, active: active }
+}
+
+fn display_record(r: Record) {
+    println("| ", r.name, " | score=", r.score, " | active=", r.active, " |")
+}
+
+fn compute_stats(records: [Record]) -> QueryResult {
+    let mut count = 0
+    let mut total = 0
+    for r in records {
+        if r.active {
+            count = count + 1
+            total = total + r.score
+        }
+    }
+    let avg = if count > 0 { total / count } else { 0 }
+    QueryResult { count: count, total_score: total, avg_score: avg }
+}
+
+fn main() {
+    println("=== KLIK Mini Database ===")
+    println()
+
+    // Insert records
+    let records = [
+        create_record(1, "Alice", 95, true),
+        create_record(2, "Bob", 82, true),
+        create_record(3, "Charlie", 78, false),
+        create_record(4, "Diana", 91, true),
+        create_record(5, "Eve", 88, true),
+        create_record(6, "Frank", 65, false),
+        create_record(7, "Grace", 97, true),
+        create_record(8, "Hank", 73, true),
+    ]
+
+    // Display all records
+    println("--- All Records ---")
+    for r in records {
+        display_record(r)
+    }
+
+    // Query: active records
+    println()
+    println("--- Active Records ---")
+    let records2 = [
+        create_record(1, "Alice", 95, true),
+        create_record(2, "Bob", 82, true),
+        create_record(3, "Charlie", 78, false),
+        create_record(4, "Diana", 91, true),
+        create_record(5, "Eve", 88, true),
+        create_record(6, "Frank", 65, false),
+        create_record(7, "Grace", 97, true),
+        create_record(8, "Hank", 73, true),
+    ]
+    for r in records2 {
+        if r.active {
+            display_record(r)
+        }
+    }
+
+    // Query: high scorers (score > 85)
+    println()
+    println("--- High Scorers (score > 85) ---")
+    let records3 = [
+        create_record(1, "Alice", 95, true),
+        create_record(2, "Bob", 82, true),
+        create_record(3, "Charlie", 78, false),
+        create_record(4, "Diana", 91, true),
+        create_record(5, "Eve", 88, true),
+        create_record(6, "Frank", 65, false),
+        create_record(7, "Grace", 97, true),
+        create_record(8, "Hank", 73, true),
+    ]
+    for r in records3 {
+        if r.score > 85 {
+            display_record(r)
+        }
+    }
+
+    // Compute statistics for active records
+    let records4 = [
+        create_record(1, "Alice", 95, true),
+        create_record(2, "Bob", 82, true),
+        create_record(3, "Charlie", 78, false),
+        create_record(4, "Diana", 91, true),
+        create_record(5, "Eve", 88, true),
+        create_record(6, "Frank", 65, false),
+        create_record(7, "Grace", 97, true),
+        create_record(8, "Hank", 73, true),
+    ]
+    let stats = compute_stats(records4)
+
+    println()
+    println("--- Statistics (Active Records) ---")
+    println("Active count:", stats.count)
+    println("Total score:", stats.total_score)
+    println("Average score:", stats.avg_score)
+
+    // Pipeline: get scores of active records, sorted
+    println()
+    println("--- Score Pipeline ---")
+    let scores = [95, 82, 91, 88, 97, 73]
+    let high = scores |> filter(|s| s > 80) |> collect()
+    println("Scores above 80:", high)
+    let total = scores |> sum()
+    println("Sum of all active scores:", total)
+    let count = scores |> count()
+    println("Number of active records:", count)
+}

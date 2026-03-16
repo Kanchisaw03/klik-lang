@@ -1,0 +1,11 @@
+[package]
+name = "klik-linter"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+klik-ast = { workspace = true }
+klik-lexer = { workspace = true }
+klik-parser = { workspace = true }
+klik-semantic = { workspace = true }
+colored = { workspace = true }

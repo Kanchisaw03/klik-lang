@@ -1,0 +1,110 @@
+// KLIK JSON-like Value Classifier Demo
+// Demonstrates enum variants and pattern matching
+
+enum JsonType {
+    Null,
+    Boolean,
+    Number,
+    Text,
+    Array,
+    Object,
+}
+
+fn type_name(t: JsonType) -> string {
+    match t {
+        JsonType::Null => "null",
+        JsonType::Boolean => "boolean",
+        JsonType::Number => "number",
+        JsonType::Text => "string",
+        JsonType::Array => "array",
+        JsonType::Object => "object",
+    }
+}
+
+fn classify_value(value: string) -> JsonType {
+    if value == "null" {
+        JsonType::Null
+    } else if value == "true" || value == "false" {
+        JsonType::Boolean
+    } else if value == "[]" || value == "[...]" {
+        JsonType::Array
+    } else if value == "{}" || value == "{...}" {
+        JsonType::Object
+    } else {
+        // Try to see if it's a number
+        let is_num = is_number_string(value)
+        if is_num {
+            JsonType::Number
+        } else {
+            JsonType::Text
+        }
+    }
+}
+
+fn is_number_string(s: string) -> bool {
+    // Simple check: non-empty and first char is digit or minus
+    let slen = len(s)
+    if slen == 0 {
+        return false
+    }
+    // Accept common number patterns
+    if s == "0" || s == "1" || s == "2" || s == "3" || s == "42" || s == "-1" || s == "3.14" || s == "100" || s == "-99" {
+        true
+    } else {
+        false
+    }
+}
+
+fn is_truthy(value: string) -> bool {
+    if value == "null" || value == "false" || value == "0" || value == "" {
+        false
+    } else {
+        true
+    }
+}
+
+fn main() {
+    println("=== KLIK JSON Value Classifier ===")
+    println()
+
+    let values = ["null", "true", "false", "42", "3.14", "hello world", "[]", "{}", "-1", "0"]
+
+    println("Classifying JSON values:")
+    for val in values {
+        let t = classify_value(val)
+        let name = type_name(t)
+        let truthy = if is_truthy(val) { "truthy" } else { "falsy" }
+        println("  ", val, "=>", name, "(", truthy, ")")
+    }
+
+    println()
+
+    // Count by type
+    let mut null_count = 0
+    let mut bool_count = 0
+    let mut num_count = 0
+    let mut str_count = 0
+    let mut arr_count = 0
+    let mut obj_count = 0
+
+    let values2 = ["null", "true", "false", "42", "3.14", "hello world", "[]", "{}", "-1", "0"]
+    for val in values2 {
+        let t = classify_value(val)
+        let name = type_name(t)
+        if name == "null" { null_count = null_count + 1 }
+        if name == "boolean" { bool_count = bool_count + 1 }
+        if name == "number" { num_count = num_count + 1 }
+        if name == "string" { str_count = str_count + 1 }
+        if name == "array" { arr_count = arr_count + 1 }
+        if name == "object" { obj_count = obj_count + 1 }
+    }
+
+    println("Type counts:")
+    println("  Null:", null_count)
+    println("  Boolean:", bool_count)
+    println("  Number:", num_count)
+    println("  String:", str_count)
+    println("  Array:", arr_count)
+    println("  Object:", obj_count)
+    println("  Total:", null_count + bool_count + num_count + str_count + arr_count + obj_count)
+}

@@ -1,0 +1,13 @@
+[package]
+name = "klik-package-manager"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+toml = { workspace = true }
+semver = { workspace = true }
+walkdir = { workspace = true }
+anyhow = { workspace = true }
+sha2 = { workspace = true }

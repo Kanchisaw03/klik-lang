@@ -1,0 +1,52 @@
+// Testing in KLIK
+
+fn add(a: int, b: int) -> int {
+    a + b
+}
+
+fn multiply(a: int, b: int) -> int {
+    a * b
+}
+
+fn factorial(n: int) -> int {
+    if n <= 1 {
+        1
+    } else {
+        n * factorial(n - 1)
+    }
+}
+
+fn is_even(n: int) -> bool {
+    n % 2 == 0
+}
+
+// Tests use the built-in `test` keyword
+test "addition works" {
+    assert(add(2, 3) == 5)
+    assert(add(0, 0) == 0)
+    assert(add(-1, 1) == 0)
+}
+
+test "multiplication works" {
+    assert(multiply(3, 4) == 12)
+    assert(multiply(0, 100) == 0)
+    assert(multiply(-2, 3) == -6)
+}
+
+test "factorial" {
+    assert(factorial(0) == 1)
+    assert(factorial(1) == 1)
+    assert(factorial(5) == 120)
+    assert(factorial(10) == 3628800)
+}
+
+test "is_even" {
+    assert(is_even(0) == true)
+    assert(is_even(2) == true)
+    assert(is_even(3) == false)
+    assert(is_even(-4) == true)
+}
+
+fn main() {
+    println("Run with: klik test")
+}

@@ -1,0 +1,9 @@
+fn main() {
+    let result =
+        [1, 2, 3, 4, 5]
+        |> map(|x| x * 3)
+        |> filter(|x| x > 6)
+        |> sum()
+
+    println(result)
+}

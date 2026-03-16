@@ -1,0 +1,9 @@
+[package]
+name = "klik-lexer"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+klik-ast = { workspace = true }
+logos = { workspace = true }
+thiserror = { workspace = true }

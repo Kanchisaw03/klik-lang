@@ -1,0 +1,124 @@
+// KLIK File Search Tool Demo
+// File system simulation with search and statistics
+
+struct FileEntry {
+    name: string,
+    size: int,
+    is_dir: bool,
+}
+
+impl FileEntry {
+    fn kind(self) -> string {
+        if self.is_dir { "DIR" } else { "FILE" }
+    }
+
+    fn is_large(self) -> bool {
+        self.size > 1000
+    }
+}
+
+fn search_by_min_size(entries: [FileEntry], min_size: int) -> int {
+    let mut match_count = 0
+    for entry in entries {
+        if !entry.is_dir && entry.size >= min_size {
+            println("  Found:", entry.name, "(", entry.size, "bytes)")
+            match_count = match_count + 1
+        }
+    }
+    match_count
+}
+
+fn total_size(entries: [FileEntry]) -> int {
+    let mut total = 0
+    for entry in entries {
+        if !entry.is_dir {
+            total = total + entry.size
+        }
+    }
+    total
+}
+
+fn count_dirs(entries: [FileEntry]) -> int {
+    let mut count = 0
+    for entry in entries {
+        if entry.is_dir { count = count + 1 }
+    }
+    count
+}
+
+fn count_files(entries: [FileEntry]) -> int {
+    let mut count = 0
+    for entry in entries {
+        if !entry.is_dir { count = count + 1 }
+    }
+    count
+}
+
+fn largest_file(entries: [FileEntry]) -> string {
+    let mut max_size = 0
+    let mut max_name = "none"
+    for entry in entries {
+        if !entry.is_dir && entry.size > max_size {
+            max_size = entry.size
+            max_name = entry.name
+        }
+    }
+    max_name
+}
+
+fn make_fs() -> [FileEntry] {
+    [
+        FileEntry { name: "src/main.klik", size: 1024, is_dir: false },
+        FileEntry { name: "src/lib.klik", size: 2048, is_dir: false },
+        FileEntry { name: "src/utils", size: 0, is_dir: true },
+        FileEntry { name: "src/utils/math.klik", size: 512, is_dir: false },
+        FileEntry { name: "src/utils/strings.klik", size: 768, is_dir: false },
+        FileEntry { name: "tests/test_main.klik", size: 4096, is_dir: false },
+        FileEntry { name: "README.md", size: 3500, is_dir: false },
+        FileEntry { name: "Klik.toml", size: 256, is_dir: false },
+        FileEntry { name: "target", size: 0, is_dir: true },
+        FileEntry { name: ".gitignore", size: 128, is_dir: false },
+    ]
+}
+
+fn main() {
+    println("=== KLIK File Search Tool ===")
+
+    let fs1 = make_fs()
+    let fs2 = make_fs()
+    let fs3 = make_fs()
+    let fs4 = make_fs()
+    let fs5 = make_fs()
+
+    let files = count_files(fs1)
+    let dirs = count_dirs(fs2)
+    println("Total entries:", files + dirs)
+    println("  Files:", files)
+    println("  Directories:", dirs)
+
+    let total = total_size(fs3)
+    println("  Total size:", total, "bytes")
+    if files > 0 {
+        println("  Average file size:", total / files, "bytes")
+    }
+
+    let biggest = largest_file(fs4)
+    println("  Largest file:", biggest)
+
+    println()
+    println("Files larger than 1000 bytes:")
+    let matches = search_by_min_size(fs5, 1000)
+    println("Found", matches, "matching files")
+
+    let fs6 = make_fs()
+    println()
+    println("Small files (<=500 bytes):")
+    let mut small_count = 0
+    for entry in fs6 {
+        if !entry.is_dir && entry.size <= 500 {
+            println("  ", entry.name, ":", entry.size, "bytes")
+            small_count = small_count + 1
+        }
+    }
+    println("Found", small_count, "small files")
+}
